@@ -1,0 +1,53 @@
+package configuration
+
+import (
+    "SocketTest/configuration"
+    "bytes"
+    "fmt"
+    "log"
+
+    r "gopkg.in/rethinkdb/rethinkdb-go.v5"
+)
+
+var (
+    //
+    UrlRethinkDBServer      string
+    )
+
+func Init() {
+
+
+    //llamar funcion para concatenar host y puerto
+    UrlRethinkDBServer = concatHostPort(DefaultHost, DefaultPortRethinkDB)
+
+    session, err := r.Connect(r.ConnectOpts{
+        Address: UrlRethinkDBServer,// endpoint without http
+        Database: DatabaseRethinkDBServer,
+        Username: configuration.UserRethinkDBServer,
+        Password: configuration.PasswordRethinkDBServer,
+    })
+    if err != nil {
+        log.Fatalln(err)
+
+    }
+
+    db := session.Database()
+    fmt.Println(session)
+
+    // Output:
+    // Hello World
+}
+
+
+
+func concatHostPort(
+    host string,
+    port string,
+) string {
+    var buffer bytes.Buffer
+    buffer.WriteString(host)
+    buffer.WriteString(Colon)
+    buffer.WriteString(port)
+    urlAddressServer := buffer.String()
+    return urlAddressServer
+}
